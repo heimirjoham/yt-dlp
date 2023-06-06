@@ -113,7 +113,8 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
 
                     if format_id not in entries_format:
                         entries_format[format_id] = []
-                    entries_format[format_id].append(track.get('TRACK_TOKEN'))
+                    # If there is a fallback TRACK_TOKEN, it will be the one to use, else fetch standard TRACK_TOKEN
+                    entries_format[format_id].append(traverse_obj(track, ('FALLBACK', 'TRACK_TOKEN'), 'TRACK_TOKEN', default=''))
 
                     if format_id not in format_index:
                         format_index[format_id] = 0
@@ -127,12 +128,12 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                      })
                      format_index[format_id] += 1
             entries.append({
-                'id': track.get('SNG_ID'),
+                'id': traverse_obj(track, ('FALLBACK', 'SNG_ID'), 'SNG_ID', default=None),
                 'duration': str_to_int(track.get('DURATION')),
                 'title': track.get('SNG_TITLE'),
                 'uploader': track.get('ART_NAME'),
                 'artist': track.get('ART_NAME'),
-                'uploader_id': track.get('ART_ID'),
+                'uploader_id': traverse_obj(track, ('FALLBACK', 'ART_ID'), 'ART_ID', default=None),
                 'track_number': str_to_int(track.get('TRACK_NUMBER')),
                 'release_date': str_to_int(track.get('DIGITAL_RELEASE_DATE', '').replace(' ', '')),
                 'album': track.get('ALB_TITLE'),
@@ -163,7 +164,7 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                 fresponse = format_responses[fentry['format_id']]
                 data_obj = fresponse['data'][fentry['index']]
                 # If media is not allowed with our token not transformed we still get the preview in mp3_128
-                if 'media' not in data_obj:
+                if 'media' not in data_obj or not data_obj['media']:
                     if fentry['format_id'] == 'MP3_128':
                         fetched_formats.append(fentry)
                 else:
