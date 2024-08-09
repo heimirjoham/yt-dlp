@@ -125,8 +125,8 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                         'ext': formatref[format_id]['ext'],
                         'protocol': 'deezer',
                         'index': format_index[format_id],
-                     })
-                     format_index[format_id] += 1
+                    })
+                    format_index[format_id] += 1
             entries.append({
                 'id': traverse_obj(track, ('FALLBACK', 'SNG_ID'), 'SNG_ID', default=None),
                 'duration': str_to_int(track.get('DURATION')),

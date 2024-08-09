@@ -31,7 +31,7 @@ from .hls import HlsFD
 from .http import HttpFD
 from .ism import IsmFD
 from .mhtml import MhtmlFD
-from .niconico import NiconicoDmcFD
+from .niconico import NiconicoDmcFD, NiconicoLiveFD
 from .rtmp import RtmpFD
 from .rtsp import RtspFD
 from .websocket import WebSocketFragmentFD
@@ -52,6 +52,7 @@ PROTOCOL_MAP = {
     'ism': IsmFD,
     'mhtml': MhtmlFD,
     'niconico_dmc': NiconicoDmcFD,
+    'niconico_live': NiconicoLiveFD,
     'fc2_live': FC2LiveFD,
     'websocket_frag': WebSocketFragmentFD,
     'youtube_live_chat': YoutubeLiveChatFD,
