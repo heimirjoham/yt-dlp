@@ -169,7 +169,7 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                         fetched_formats.append(fentry)
                 else:
                     media_obj = data_obj['media'][0]
-                    fentry['url'] = next(source['url'] for source in media_obj['sources'] if source['provider'] == 'ak')
+                    fentry['url'] = next(source['url'] for source in media_obj['sources'] if source['provider'] == 'akg')
                     fentry['key'] = self.compute_blowfish_key(entry['id'])
                     fetched_formats.append(fentry)
             entry['formats'] = fetched_formats
