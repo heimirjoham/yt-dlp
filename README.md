@@ -1,3 +1,8 @@
+> [!Note] 
+> This repository is a fork of yt-dlp with special handling for Deezer.  
+> If you wish to support further development and help speed up new features, you can donate BTC to the following address: `bc1qxnhngjw8ed2rx9qy6zdp7kxlwstyxnpet3zy7v`
+
+
 <!-- MANPAGE: BEGIN EXCLUDED SECTION -->
 <div align="center">
 
