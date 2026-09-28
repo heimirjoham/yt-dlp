@@ -115,12 +115,14 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                         entries_format[format_id] = []
                     # If there is a fallback TRACK_TOKEN, it will be the one to use, else fetch standard TRACK_TOKEN
                     entries_format[format_id].append(traverse_obj(track, ('FALLBACK', 'TRACK_TOKEN'), 'TRACK_TOKEN', default=''))
-
                     if format_id not in format_index:
                         format_index[format_id] = 0
+
+                    t = track.get('MEDIA') or track.get('FALLBACK', {}).get('MEDIA') or [{}]
+                    url = t[0].get('HREF')
                     formatinfo.append({
                         'format_id': format_id,
-                        'url' : track.get('MEDIA', [{}])[0].get('HREF'),
+                        'url' : url,
                         'preference': formatref[format_id]['preference'],
                         'ext': formatref[format_id]['ext'],
                         'protocol': 'deezer',
