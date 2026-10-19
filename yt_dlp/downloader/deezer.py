@@ -1,15 +1,16 @@
 from __future__ import unicode_literals
 
+import struct
+import time
+
 from ..blowfish import blowfish_cbc_decrypt
-from .common import FileDownloader
 from ..networking import Request
 from ..utils import int_or_none, sanitize_open
-from ..compat import compat_struct_pack
-import time
+from .common import FileDownloader
 
 
 def writeid3v1(fo, info_dict):
-    data = compat_struct_pack("3s" "30s" "30s" "30s" "4s" "28s" "BB" "B",
+    data = struct.pack("3s" "30s" "30s" "30s" "4s" "28s" "BB" "B",
                               b"TAG",
                               info_dict["track"].encode('utf-8'),
                               info_dict["artist"].encode('utf-8'),
@@ -26,7 +27,7 @@ def writeid3v2(fo, info_dict, ydl):
         return ((x << 3) & 0x7F000000) | ((x << 2) & 0x7F0000) | ((x << 1) & 0x7F00) | (x & 127)
 
     def maketag(tag, content):
-        return compat_struct_pack(">4sLH", tag, len(content), 0) + content
+        return struct.pack(">4sLH", tag, len(content), 0) + content
 
     def makeutf8(txt):
         return b"\x03" + (txt.encode('utf-8'))
@@ -53,7 +54,7 @@ def writeid3v2(fo, info_dict, ydl):
 
     id3data = b"".join(id3)
 
-    hdr = compat_struct_pack(">3s" "H" "B" "L",
+    hdr = struct.pack(">3s" "H" "B" "L",
                              b"ID3",
                              0x400,   # version
                              0x00,    # flags

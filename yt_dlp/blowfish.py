@@ -1,4 +1,4 @@
-from .compat import compat_struct_unpack, compat_struct_pack
+import struct
 
 # Blowfish implementation, translated from original C code by Bruce Schneier.
 
@@ -290,9 +290,9 @@ def blowfish_cbc_decrypt(data, key, iv):
     """
     fmt = ">%dL" % (len(data) // 4)
     c = Blowfish(key)
-    ivl, ivr = compat_struct_unpack(">LL", iv)
+    ivl, ivr = struct.unpack(">LL", iv)
     out = []
-    ind = compat_struct_unpack(fmt, data)
+    ind = struct.unpack(fmt, data)
 
     for i in range(0, len(ind), 2):
         l, r = c.decipher(ind[i], ind[i + 1])
@@ -303,7 +303,7 @@ def blowfish_cbc_decrypt(data, key, iv):
         out.append(l)
         out.append(r)
 
-    return compat_struct_pack(fmt, *out)
+    return struct.pack(fmt, *out)
 
 
 __all__ = ['blowfish_cbc_decrypt']
