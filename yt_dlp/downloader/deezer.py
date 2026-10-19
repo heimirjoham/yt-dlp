@@ -2,7 +2,8 @@ from __future__ import unicode_literals
 
 from ..blowfish import blowfish_cbc_decrypt
 from .common import FileDownloader
-from ..utils import sanitized_Request, sanitize_open
+from ..networking import Request
+from ..utils import int_or_none, sanitize_open
 from ..compat import compat_struct_pack
 import time
 
@@ -89,10 +90,10 @@ def decryptfile(fh, key, fo, progressupdate):
 class DeezerFD(FileDownloader):
     def real_download(self, filename, info_dict):
         url = info_dict['url']
-        request = sanitized_Request(url, None, {})
+        request = Request(url)
         data = self.ydl.urlopen(request)
         tstart = time.time()
-        data_len = int(data.info().get('Content-length', 0))
+        data_len = int_or_none(data.headers.get('Content-length')) or 0
 
         def progressupdate(byte_counter):
             self._hook_progress({

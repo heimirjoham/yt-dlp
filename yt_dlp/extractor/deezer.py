@@ -125,6 +125,8 @@ class DeezerMusicExtractor(DeezerBaseInfoExtractor):
                         'url' : url,
                         'preference': formatref[format_id]['preference'],
                         'ext': formatref[format_id]['ext'],
+                        'vcodec': 'none',
+                        'acodec': formatref[format_id]['ext'],
                         'protocol': 'deezer',
                         'index': format_index[format_id],
                     })
@@ -223,6 +225,8 @@ class DeezerPodcastExtractor(DeezerBaseInfoExtractor):
                     'url': episode.get('EPISODE_DIRECT_STREAM_URL'),
                     'preference': -3,
                     'ext': 'mp3',
+                    'vcodec': 'none',
+                    'acodec': 'mp3',
                     'track_token': episode.get('TRACK_TOKEN'),
                 }]
             })
