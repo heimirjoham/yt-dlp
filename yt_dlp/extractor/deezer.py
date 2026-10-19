@@ -231,7 +231,7 @@ class DeezerPodcastExtractor(DeezerBaseInfoExtractor):
 
 
 class DeezerArtistIE(DeezerMusicExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/artist/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?artist/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'https://www.deezer.com/fr/artist/1711511',
         'info_dict': {
@@ -269,7 +269,7 @@ class DeezerArtistIE(DeezerMusicExtractor):
 
 
 class DeezerPlaylistIE(DeezerMusicExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/playlist/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?playlist/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'http://www.deezer.com/playlist/176747451',
         'info_dict': {
@@ -308,7 +308,7 @@ class DeezerPlaylistIE(DeezerMusicExtractor):
 
 
 class DeezerAlbumIE(DeezerMusicExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/album/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?album/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'https://www.deezer.com/fr/album/67505622',
         'info_dict': {
@@ -347,7 +347,7 @@ class DeezerAlbumIE(DeezerMusicExtractor):
 
 
 class DeezerTrackIE(DeezerMusicExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/track/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?track/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'https://www.deezer.com/fr/track/675631092',
         'info_dict': {
@@ -386,7 +386,7 @@ class DeezerTrackIE(DeezerMusicExtractor):
 
 
 class DeezerEpisodeIE(DeezerPodcastExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/episode/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?episode/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'https://www.deezer.com/fr/episode/432949767',
         'info_dict': {
@@ -423,7 +423,7 @@ class DeezerEpisodeIE(DeezerPodcastExtractor):
 
 
 class DeezerShowIE(DeezerPodcastExtractor):
-    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?P<country>..+)/show/(?P<id>[0-9]+)'
+    _VALID_URL = r'https?://(?:www\.)?deezer\.com/(?:(?P<country>..+)/)?show/(?P<id>[0-9]+)'
     _TEST = {
         'url': 'https://www.deezer.com/fr/show/1805732',
         'info_dict': {
