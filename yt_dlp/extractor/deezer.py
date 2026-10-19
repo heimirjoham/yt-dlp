@@ -1,8 +1,9 @@
 import json
 import re
 from hashlib import md5
-from .common import InfoExtractor
+from .common import InfoExtractor, SearchInfoExtractor
 from ..utils import (
+    ExtractorError,
     str_to_int,
     traverse_obj,
 )
@@ -387,6 +388,101 @@ class DeezerTrackIE(DeezerMusicExtractor):
             'thumbnail': track_thumbnail,
             'entries': track_entries,
         }
+
+
+class DeezerSearchIE(SearchInfoExtractor):
+    IE_NAME = 'deezer:search'
+    IE_DESC = 'Deezer search'
+    _SEARCH_KEY = 'dzsearch'
+    _AUTH_URL = 'https://auth.deezer.com/login/renew?jo=p&rto=c&i=c'
+    _API_URL = 'https://pipe.deezer.com/api'
+    _PAGE_SIZE = 6
+    _SEARCH_QUERY = '''query SearchFull($query: String!, $firstList: Int!, $after: String) {
+  instantSearch(query: $query) {
+    results {
+      tracks(first: $firstList, after: $after) {
+        edges {
+          node {
+            id
+            title
+            contributors {
+              edges { node { ... on Artist { name } } }
+            }
+          }
+        }
+        pageInfo { endCursor }
+      }
+    }
+  }
+}'''
+
+    def _search_results(self, query):
+        auth_response = self._download_json(self._AUTH_URL, query, note='Refreshing Deezer bearer token', data=b'', headers={
+            'Accept': 'application/json',
+            'Origin': 'https://www.deezer.com',
+            'Referer': 'https://www.deezer.com/',
+        })
+        access_token = traverse_obj(auth_response, ('jwt',))
+        if not isinstance(access_token, str) or not access_token:
+            raise ExtractorError('Unable to obtain a Deezer bearer token; provide logged-in Deezer cookies', expected=True)
+
+        search_terms = set(re.findall(r'\w+', query.casefold()))
+        cursor = None
+        while True:
+            request_data = {
+                'operationName': 'SearchFull',
+                'variables': {
+                    'query': query,
+                    'firstList': self._PAGE_SIZE,
+                    'after': cursor,
+                },
+                'query': self._SEARCH_QUERY,
+            }
+            response = self._download_json(
+                self._API_URL, query, note='Searching Deezer', data=json.dumps(request_data).encode(), headers={
+                    'Authorization': f'Bearer {access_token}',
+                    'Content-Type': 'application/json',
+                    'Cookie': '',
+                    'Origin': 'https://www.deezer.com',
+                    'Referer': 'https://www.deezer.com/',
+                })
+            if not isinstance(response, dict):
+                break
+            if response.get('errors'):
+                raise ExtractorError('Deezer search API returned an error', expected=True)
+
+            data = response.get('data')
+            instant_search = data.get('instantSearch') if isinstance(data, dict) else None
+            search_results = instant_search.get('results') if isinstance(instant_search, dict) else None
+            tracks = search_results.get('tracks') if isinstance(search_results, dict) else None
+            if not isinstance(tracks, dict):
+                break
+            edges = tracks.get('edges')
+            if not isinstance(edges, list):
+                edges = []
+            for edge in edges:
+                track = traverse_obj(edge, ('node',))
+                if not isinstance(track, dict):
+                    continue
+                contributors = track.get('contributors')
+                contributor_edges = contributors.get('edges') if isinstance(contributors, dict) else None
+                artist_names = [
+                    name for contributor in contributor_edges or []
+                    if isinstance((name := traverse_obj(contributor, ('node', 'name'))), str)
+                ]
+                title = track.get('title')
+                searchable_text = ' '.join([title if isinstance(title, str) else '', *artist_names])
+                if search_terms and not search_terms.issubset(re.findall(r'\w+', searchable_text.casefold())):
+                    continue
+                track_id = track.get('id')
+                if track_id:
+                    yield self.url_result(f'https://www.deezer.com/track/{track_id}', DeezerTrackIE.ie_key())
+
+            page_info = tracks.get('pageInfo')
+            next_cursor = page_info.get('endCursor') if isinstance(page_info, dict) else None
+            if len(edges) < self._PAGE_SIZE or not next_cursor or next_cursor == cursor:
+                break
+            cursor = next_cursor
 
 
 class DeezerEpisodeIE(DeezerPodcastExtractor):

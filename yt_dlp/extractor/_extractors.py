@@ -433,6 +433,7 @@ from .deezer import (
     DeezerTrackIE,
     DeezerEpisodeIE,
     DeezerShowIE,
+    DeezerSearchIE,
 )
 from .democracynow import DemocracynowIE
 from .detik import DetikEmbedIE
